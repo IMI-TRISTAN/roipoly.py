@@ -80,17 +80,23 @@ class RoiPoly:
             plt.show(block=True)
 
     def get_mask(self, current_image):
+        print("get_mask")
         ny, nx = np.shape(current_image)
+        print("ny ={} nx={}".format(ny, nx))
         poly_verts = ([(self.x[0], self.y[0])]
                       + list(zip(reversed(self.x), reversed(self.y))))
+        print("poly_verts ={}".format(poly_verts))
         # Create vertex coordinates for each grid cell...
         # (<0,0> is at the top left of the grid in this system)
         x, y = np.meshgrid(np.arange(nx), np.arange(ny))
         x, y = x.flatten(), y.flatten()
         points = np.vstack((x, y)).T
-
+        #points = every [x,y] pair within the original image
+        print("poly_verts={}".format(poly_verts))
         roi_path = MplPath(poly_verts)
+        print("roi_path={}".format(roi_path))
         grid = roi_path.contains_points(points).reshape((ny, nx))
+        print("grid ={}".format(grid))
         return grid
 
     def display_roi(self, **linekwargs):
@@ -122,6 +128,7 @@ class RoiPoly:
                 x_data = [self.previous_point[0], x]
                 y_data = [self.previous_point[1], y]
                 logger.debug("draw line x: {} y: {}".format(x_data, y_data))
+                print("draw line x: {} y: {}".format(x_data, y_data))
                 self.line.set_data(x_data, y_data)
                 self.fig.canvas.draw()
 
@@ -131,6 +138,7 @@ class RoiPoly:
             ax = event.inaxes
             if event.button == 1 and event.dblclick is False:
                 logger.debug("Received single left mouse button click")
+                print("Received single left mouse button click")
                 if self.line is None:  # If there is no line, create a line
                     self.line = plt.Line2D([x, x], [y, y],
                                            marker='o', color=self.color)
